@@ -1,7 +1,7 @@
 # server
 
 - fastAPI
-- MySQL
+- MySQL / MongoDB
 
 ## Reference
 
