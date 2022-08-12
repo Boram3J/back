@@ -1,0 +1,24 @@
+[tool.isort]
+profile = "black"
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-docstring",
+    "logging-fstring-interpolation",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "too-many-instance-attributes",
+    "too-many-ancestors",
+    "too-many-locals",
+    "too-many-statements",
+    "duplicate-code",
+]
+
+[tool.pylint.master]
+init-hook = "import sys; sys.path.append('.')"
+
+[tool.pylint.basic]
+good-names-rgxs = "^[_a-z][_a-z0-9]?$"
+
+[tool.pylint.typecheck]
+generated-members = "torch.*"
