@@ -5,11 +5,8 @@ import glob
 import os
 
 import torch
-from setuptools import find_packages
-from setuptools import setup
-from torch.utils.cpp_extension import CUDA_HOME
-from torch.utils.cpp_extension import CppExtension
-from torch.utils.cpp_extension import CUDAExtension
+from setuptools import find_packages, setup
+from torch.utils.cpp_extension import CUDA_HOME, CppExtension  # , CUDAExtension
 
 requirements = ["torch", "torchvision"]
 
@@ -20,7 +17,7 @@ def get_extensions():
 
     main_file = glob.glob(os.path.join(extensions_dir, "*.cpp"))
     source_cpu = glob.glob(os.path.join(extensions_dir, "cpu", "*.cpp"))
-    source_cuda = glob.glob(os.path.join(extensions_dir, "cuda", "*.cu"))
+    # source_cuda = glob.glob(os.path.join(extensions_dir, "cuda", "*.cu"))
 
     sources = main_file + source_cpu
     extension = CppExtension
@@ -28,16 +25,16 @@ def get_extensions():
     extra_compile_args = {"cxx": []}
     define_macros = []
     print(torch.cuda.is_available(), CUDA_HOME)
-    if torch.cuda.is_available() and CUDA_HOME is not None:
-        extension = CUDAExtension
-        sources += source_cuda
-        define_macros += [("WITH_CUDA", None)]
-        extra_compile_args["nvcc"] = [
-            "-DCUDA_HAS_FP16=1",
-            "-D__CUDA_NO_HALF_OPERATORS__",
-            "-D__CUDA_NO_HALF_CONVERSIONS__",
-            "-D__CUDA_NO_HALF2_OPERATORS__",
-        ]
+    # if torch.cuda.is_available() and CUDA_HOME is not None:
+    #     extension = CUDAExtension
+    #     sources += source_cuda
+    #     define_macros += [("WITH_CUDA", None)]
+    #     extra_compile_args["nvcc"] = [
+    #         "-DCUDA_HAS_FP16=1",
+    #         "-D__CUDA_NO_HALF_OPERATORS__",
+    #         "-D__CUDA_NO_HALF_CONVERSIONS__",
+    #         "-D__CUDA_NO_HALF2_OPERATORS__",
+    #     ]
 
     sources = [os.path.join(extensions_dir, s) for s in sources]
 
@@ -60,7 +57,12 @@ setup(
     name="faster_rcnn",
     version="0.1",
     description="object detection in pytorch",
-    packages=find_packages(exclude=("configs", "tests",)),
+    packages=find_packages(
+        exclude=(
+            "configs",
+            "tests",
+        )
+    ),
     # install_requires=requirements,
     ext_modules=get_extensions(),
     cmdclass={"build_ext": torch.utils.cpp_extension.BuildExtension},

@@ -2,3 +2,16 @@
 torch~=1.12.0
 torchvision~=0.13.0
 fastapi~=0.79.0
+opencv-python~=4.6.0.66
+cython~=0.29.32
+cffi~=1.15.1
+msgpack~=1.0.4
+easydict~=1.9
+matplotlib~=3.5.3
+pyyaml~=6.0
+scikit-image~=0.19.3
+scipy~=1.9.0
+pycocotools~=2.0.4
+tensorboardX~=2.5.1
+wheel~=0.37.1
+ocr/object_detection/lib
