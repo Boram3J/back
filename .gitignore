@@ -416,3 +416,5 @@ hs_err_pid*
 replay_pid*
 
 !ocr/object_detection/lib
+ocr/result
+ocr/weights
