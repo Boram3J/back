@@ -15,3 +15,4 @@ pycocotools~=2.0.4
 tensorboardX~=2.5.1
 wheel~=0.37.1
 ocr/object_detection/lib
+munch~=2.5.0

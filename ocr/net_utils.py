@@ -61,7 +61,7 @@ def load_text_detector(args):
     text_detector = LTD()
     print("Loading weights from checkpoint : ({})".format(args.text_detector))
     text_detector.load_state_dict(copyStateDict(torch.load(args.text_detector)))
-    if args.cuda:
+    if opt.cuda:
         text_detector = text_detector.cuda()
     text_detector.eval()
     return text_detector
@@ -71,7 +71,7 @@ def load_text_recognizer(args):
     text_recognizer = LTR()
     print("Loading weights from checkpoint : ({})".format(args.text_recognizer))
     text_recognizer.load_state_dict(copyStateDict(torch.load(args.text_recognizer)))
-    if args.cuda:
+    if opt.cuda:
         text_recognizer = text_recognizer.cuda()
     text_recognizer.eval()
     return text_recognizer

@@ -15,7 +15,7 @@ disable = [
 ]
 
 [tool.pylint.master]
-init-hook = "import sys; sys.path.append('.')"
+init-hook = "import sys; sys.path.append('ocr')"
 
 [tool.pylint.basic]
 good-names-rgxs = "^[_a-z][_a-z0-9]?$"

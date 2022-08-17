@@ -140,7 +140,6 @@ for k, image_path in enumerate(image_list):
         str_cnt = file_utils.resultNameNumbering(
             origin=cnt, digit=1000
         )  # ex: 1 -> 0001, 2 -> 0002
-
         img_blob, img_scale = imgproc.getImageBlob(img)
         f_RCNN_param = [img_blob, img_scale, opt.LABEL]  # LABEL: speech bubble
 
