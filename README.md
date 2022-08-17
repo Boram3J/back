@@ -10,6 +10,8 @@ pip install -r requirements.txt
 
 ### OCR Demo
 
+Download weights to `ocr/weights` as described in WORD-Pytorch
+
 ```bash
 python ocr/demo.py --ocr
 ```
