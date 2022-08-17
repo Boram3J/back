@@ -9,10 +9,16 @@ from torch import nn
 root = Path(__file__).resolve().parent
 sys.path.append(str(root / "ocr"))
 
-import imgproc  # pylint: disable=wrong-import-position
-import net_utils  # pylint: disable=wrong-import-position
-import opt  # pylint: disable=wrong-import-position
+import file_utils
+
+# pylint: disable=wrong-import-position
+import imgproc
+import net_utils
+import opt
 from object_detection.bubble import test_net as bubble_detect
+from object_detection.cut import test_opencv as cut_detect
+from text_detection.line_text import test as line_text_detect
+from text_recognition.line_text import test_net as line_text_recognize
 
 
 def singleton(cls):
@@ -58,7 +64,6 @@ def run_ocr(
     bg_type: str = "white",
     bubble_threshold: float = 0.995,
     box_threshold: int = 7000,
-    img_ratio: float = 2.0,
 ) -> Any:
     """img: 0-255 uint8 height x width x 3 image"""
     img_blob, img_scale = imgproc.getImageBlob(img)
@@ -71,4 +76,26 @@ def run_ocr(
         params=f_RCNN_param,
         cls=bubble_threshold,
         bg=bg_type,
+    )
+    demo, cuts = cut_detect(image=image, demo=demo, bg=bg_type, size=box_threshold)
+
+    demo, space, warps = line_text_detect(
+        model=models["text_detector"],
+        demo=demo,
+        bubbles=imgproc.cpImage(bubbles),
+        dets=dets_bubbles,
+        img_name="",  # ???
+        save_to="./result/chars/",  # disable saving
+    )
+
+    label_mapper = file_utils.makeLabelMapper(
+        load_from=str(root / "text_recognition" / "labels-2213.txt")
+    )
+
+    line_text_recognize(
+        model=models["text_recognizer"],
+        mapper=label_mapper,
+        spaces=space,
+        load_from="./result/chars/",
+        save_to="./result/ocr.txt",
     )
