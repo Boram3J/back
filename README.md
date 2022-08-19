@@ -18,6 +18,12 @@ Download weights to `ocr/weights` as described in WORD-Pytorch
 python ocr/demo.py --ocr
 ```
 
+### Run Server
+
+```
+python -m app
+```
+
 ## Reference
 
 - https://fastapi.tiangolo.com/tutorial/bigger-applications
