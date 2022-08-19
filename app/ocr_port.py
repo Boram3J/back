@@ -55,6 +55,7 @@ def run_ocr_and_translate(
     bg_type: str = "white",
     bubble_threshold: float = 0.995,
     box_threshold: int = 7000,
+    translate: bool = True,
 ) -> np.ndarray:
     """img: 0-255 uint8 height x width x 3 image"""
     img_blob, img_scale = imgproc.getImageBlob(img)
@@ -83,23 +84,26 @@ def run_ocr_and_translate(
         load_from=str(ocr_root / "text_recognition/labels-2213.txt")
     )
 
+    ocr_text = ocr_root / "result/ocr.txt"
+
     line_text_recognize(
         model=models["text_recognizer"],
         mapper=label_mapper,
         spaces=space,
         load_from=str(ocr_root / "result/chars/"),
-        save_to=str(ocr_root / "result/ocr.txt"),
+        save_to=str(ocr_text),
     )
 
-    papago_translation(
-        load_from=str(ocr_root / "result/ocr.txt"),
-        save_to=str(ocr_root / "result/english_ocr.txt"),
-        id=os.environ["PAPAGO_ID"],
-        pw=os.environ["PAPAGO_PW"],
-    )
+    if translate and ocr_text.read_text().strip():
+        papago_translation(
+            load_from=str(ocr_text),
+            save_to=str(ocr_root / "result/english_ocr.txt"),
+            id=os.environ["PAPAGO_ID"],
+            pw=os.environ["PAPAGO_PW"],
+        )
 
-    gen_text_to_image(
-        load_from=str(ocr_root / "result/english_ocr.txt"), warp_item=warps
-    )
+        gen_text_to_image(
+            load_from=str(ocr_root / "result/english_ocr.txt"), warp_item=warps
+        )
 
     return demo

@@ -23,10 +23,12 @@ def display_stdout(chars=None, space=None, img_name=None, MODE=None, save_to=Non
     cnt = 0
     img_idx = 0
     bubble = 0
-    with codecs.open(save_to, "w", encoding='utf-8-sig') as res:
+    with codecs.open(save_to, "w", encoding="utf-8-sig") as res:
         for k, char in enumerate(chars):
             cnt += 1
             str_buffer += char
+            if not bubble:
+                continue
             if cnt == space[bubble][word]:
                 str_buffer += " "
                 word += 1
