@@ -5,9 +5,10 @@ from fastapi import FastAPI, File, UploadFile
 from PIL import Image
 from starlette.responses import StreamingResponse
 
-from ocr_port import run_ocr , papago
+from app.ocr_port import run_ocr
 
 app = FastAPI()
+
 
 @app.get("/")
 def root():
@@ -27,12 +28,12 @@ def get_image(file: UploadFile = File(...)):
 def translate(file: UploadFile = File(...)):
     image = np.array(Image.open(file.file))
     # process image
-    
-    #detection
-    #recognition
+
+    # detection
+    # recognition
     run_ocr(img=image)
-    #papago
+    # papago
     papago()
-    #reult
+    # reult
     # convert to png bytes
     return StreamingResponse(io.BytesIO(result.tobytes()), media_type="image/png")

@@ -1,6 +1,8 @@
 import importlib
+import os
 from pathlib import Path
 
+import cv2
 import numpy as np
 from munch import Munch
 from torch import nn
@@ -49,7 +51,7 @@ class ModelManager:
         return self._models
 
 
-def run_ocr(
+def run_ocr_and_translate(
     img: np.ndarray,
     bg_type: str = "white",
     bubble_threshold: float = 0.995,
@@ -93,12 +95,12 @@ def run_ocr(
     papago_translation(
         load_from=str(ocr_root / "result/ocr.txt"),
         save_to=str(ocr_root / "result/english_ocr.txt"),
-        id=opt.PAPAGO_ID,
-        pw=opt.PAPAGO_PW,
+        id=os.environ["PAPAGO_ID"],
+        pw=os.environ["PAPAGO_PW"],
     )
 
     gen_text_to_image(
         load_from=str(ocr_root / "result/english_ocr.txt"), warp_item=warps
     )
 
-    return demo
+    return cv2.cvtColor(demo, cv2.COLOR_BGR2RGB)  #  pylint: disable=no-member
