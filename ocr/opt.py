@@ -19,7 +19,7 @@ RNG_SEED = 3
 DRAWTXT = False
 DRAWLINK = False
 DRAWBUB = False
-DRAWCUT = True
+DRAWCUT = False
 BUBBLE_TRAIN_FLIP = False
 BACKBONE = "res101"
 
