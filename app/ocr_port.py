@@ -2,7 +2,6 @@ import importlib
 import os
 from pathlib import Path
 
-import cv2
 import numpy as np
 from munch import Munch
 from torch import nn
@@ -103,4 +102,4 @@ def run_ocr_and_translate(
         load_from=str(ocr_root / "result/english_ocr.txt"), warp_item=warps
     )
 
-    return cv2.cvtColor(demo, cv2.COLOR_BGR2RGB)  #  pylint: disable=no-member
+    return demo
