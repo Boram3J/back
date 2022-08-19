@@ -1,4 +1,4 @@
-# Installation
+## Installation
 
 Requires `python>=3.9` and `cuda==1.16`
 
@@ -10,7 +10,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### OCR Demo
+## OCR Demo
 
 Download weights to `ocr/weights` as described in WORD-Pytorch
 
@@ -18,7 +18,7 @@ Download weights to `ocr/weights` as described in WORD-Pytorch
 python ocr/demo.py --ocr
 ```
 
-### Run Server
+## Run Server
 
 ```
 python -m app
