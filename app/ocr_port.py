@@ -1,3 +1,5 @@
+import importlib
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -6,34 +8,21 @@ import numpy as np
 from munch import Munch
 from torch import nn
 
-import os
+from app.util import add_sys_path, singleton
 
-root = Path(__file__).resolve().parent
-# root = Path(__file__).resolve().parent.parent
-sys.path.append(str(root / "ocr"))
+root = Path(__file__).resolve().parent.parent
 
-import file_utils
-
-# pylint: disable=wrong-import-position
-import imgproc
-import net_utils
-import opt
-from object_detection.bubble import test_net as bubble_detect
-from object_detection.cut import test_opencv as cut_detect
-from text_detection.line_text import test as line_text_detect
-from text_recognition.line_text import test_net as line_text_recognize
-from translation.papago import translation as papago_translation
-from text_recognition.ltr_utils import gen_txt_to_image as gen_text_to_image
-
-def singleton(cls):
-    instances = {}
-
-    def wrapper(*args, **kwargs):
-        if cls not in instances:
-            instances[cls] = cls(*args, **kwargs)
-        return instances[cls]
-
-    return wrapper
+with add_sys_path(root / "ocr"):
+    file_utils = importlib.import_module("file_utils")
+    net_utils = importlib.import_module("net_utils")
+    imgproc = importlib.import_module("imgproc")
+    opt = importlib.import_module("opt")
+    bubble_detect = importlib.import_module("object_detection.bubble").test_net
+    cut_detect = importlib.import_module("object_detection.cut").test_opencv
+    line_text_detect = importlib.import_module("text_detection.line_text").test
+    line_text_recognize = importlib.import_module("text_recognition.line_text").test_net
+    gen_text_to_image = importlib.import_module("text_recognition.ltr_utils").gen_txt_to_image
+    papago_translation = importlib.import_module("translation.papago").translation
 
 
 @singleton
@@ -62,7 +51,7 @@ class ModelManager:
             self.load()
         return self._models
 
-text_warp_items = [] 
+text_warp_items = []
 
 def run_ocr(
     img: np.ndarray,
@@ -89,10 +78,10 @@ def run_ocr(
         demo=demo,
         bubbles=imgproc.cpImage(bubbles),
         dets=dets_bubbles,
-        img_name="",  # ???
+        img_name="img",  # ???
         save_to="./result/chars/",  # disable saving
     )
-    
+
     text_warp_items += warps
 
     label_mapper = file_utils.makeLabelMapper(
@@ -105,8 +94,8 @@ def run_ocr(
         spaces=space,
         load_from="./result/chars/",
         save_to="./result/ocr.txt",
-    )    
-    
+    )
+
 def papago():
     papago_translation(
         load_from="./result/ocr.txt",
@@ -115,4 +104,4 @@ def papago():
         pw=opt.PAPAGO_PW,
     )
     gen_text_to_image(load_from="./result/english_ocr.txt", warp_item=text_warp_items)
-    
+
