@@ -27,8 +27,6 @@ def display_stdout(chars=None, space=None, img_name=None, MODE=None, save_to=Non
         for k, char in enumerate(chars):
             cnt += 1
             str_buffer += char
-            if not bubble:
-                continue
             if cnt == space[bubble][word]:
                 str_buffer += " "
                 word += 1

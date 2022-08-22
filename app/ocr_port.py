@@ -1,5 +1,6 @@
 import importlib
 import os
+import shutil
 from pathlib import Path
 
 import numpy as np
@@ -58,6 +59,19 @@ def run_ocr_and_translate(
     translate: bool = True,
 ) -> np.ndarray:
     """img: 0-255 uint8 height x width x 3 image"""
+    shutil.rmtree(ocr_root / "result", ignore_errors=True)
+    os.makedirs(ocr_root / "result", exist_ok=True)
+    file_utils.rm_all_dir(dir=str(ocr_root / "result"))
+    file_utils.mkdir(
+        dir=[
+            str(ocr_root / "result"),
+            str(ocr_root / "result/bubbles"),
+            str(ocr_root / "result/cuts"),
+            str(ocr_root / "result/demo"),
+            str(ocr_root / "result/chars"),
+        ]
+    )
+
     img_blob, img_scale = imgproc.getImageBlob(img)
     models = ModelManager().models
     f_rcnn_param = [img_blob, img_scale, opt.LABEL]
@@ -69,19 +83,43 @@ def run_ocr_and_translate(
         cls=bubble_threshold,
         bg=bg_type,
     )
-    demo, _cuts = cut_detect(image=image, demo=demo, bg=bg_type, size=box_threshold)
+    demo, cuts = cut_detect(image=image, demo=demo, bg=bg_type, size=box_threshold)
 
+    str_cnt = "0000"
     demo, space, warps = line_text_detect(
         model=models["text_detector"],
         demo=demo,
         bubbles=imgproc.cpImage(bubbles),
         dets=dets_bubbles,
-        img_name="img",  # ???
-        save_to=str(ocr_root / "result/chars/"),  # disable saving
+        img_name=str_cnt,  # ???
+        save_to=str(ocr_root / "result/chars/") + "/",  # disable saving
+    )
+
+    ### optional savings
+    file_utils.saveAllImages(
+        save_to=str(ocr_root / "result/bubbles/") + "/",
+        imgs=bubbles,
+        index1=str_cnt,
+        ext=".png",
+    )
+    file_utils.saveAllImages(
+        save_to=str(ocr_root / "result/cuts/") + "/",
+        imgs=cuts,
+        index1=str_cnt,
+        ext=".png",
+    )
+    ###
+
+    file_utils.saveText(
+        save_to=str(ocr_root / "result/") + "/", text=space, name="spaces"
     )
 
     label_mapper = file_utils.makeLabelMapper(
         load_from=str(ocr_root / "text_recognition/labels-2213.txt")
+    )
+
+    spaces, _ = file_utils.loadSpacingWordInfo(
+        load_from=str(ocr_root / "result/spaces.txt")
     )
 
     ocr_text = ocr_root / "result/ocr.txt"
@@ -89,8 +127,8 @@ def run_ocr_and_translate(
     line_text_recognize(
         model=models["text_recognizer"],
         mapper=label_mapper,
-        spaces=space,
-        load_from=str(ocr_root / "result/chars/"),
+        spaces=spaces,
+        load_from=str(ocr_root / "result/chars/") + "/",
         save_to=str(ocr_text),
     )
 
