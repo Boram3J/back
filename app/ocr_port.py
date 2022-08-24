@@ -1,6 +1,5 @@
 import importlib
 import os
-import shutil
 from pathlib import Path
 
 import numpy as np
@@ -59,8 +58,6 @@ def run_ocr_and_translate(
     translate: bool = True,
 ) -> np.ndarray:
     """img: 0-255 uint8 height x width x 3 image"""
-    shutil.rmtree(ocr_root / "result", ignore_errors=True)
-    os.makedirs(ocr_root / "result", exist_ok=True)
     file_utils.rm_all_dir(dir=str(ocr_root / "result"))
     file_utils.mkdir(
         dir=[
@@ -132,7 +129,7 @@ def run_ocr_and_translate(
         save_to=str(ocr_text),
     )
 
-    if translate and ocr_text.read_text().strip():
+    if translate and ocr_text.read_text(encoding="utf-8").strip():
         papago_translation(
             load_from=str(ocr_text),
             save_to=str(ocr_root / "result/english_ocr.txt"),
