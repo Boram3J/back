@@ -1,4 +1,5 @@
 import cv2
+import time
 import easyocr
 import numpy as np
 
@@ -10,7 +11,7 @@ def midpoint(x1, y1, x2, y2):
 
 
 def inpaint_text(img):
-    reader = easyocr.Reader(["en"])
+    reader = easyocr.Reader(["en"], gpu=True)
     read_text_result = reader.readtext(img, min_size=7)
     mask = np.zeros(img.shape[:2], dtype="uint8")
     box_list = []
@@ -29,5 +30,7 @@ def inpaint_text(img):
 
         cv2.line(mask, (x_mid0, y_mid0), (x_mid1, y_mi1), 255, thickness)
         img = cv2.inpaint(img[..., :3], mask, 10, cv2.INPAINT_NS)
+
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     return img
